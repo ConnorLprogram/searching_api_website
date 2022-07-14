@@ -1,23 +1,3 @@
-let apiKey = "AIzaSyAWopeKfjAyUSPhGuLJeKnTGkUurG6fS_0"; 
-let urlString = "https://youtube.googleapis.com/youtube/v3/search?part=snippet&order=relevance&type=video&key=" + apiKey + "&q=";
-
-function BuildURLStringYoutube(queryArray){
-    queryString = EncodeQueries(queryArray);
-    return urlString + queryString;
-}
-
-function GetLinks(jsonObject){
-    linkList = Array();
-    let index = 0;
-
-    jsonObject.items.array.forEach(ids => {
-        linkList[index] = "https://www.youtube.com/watch?v=" + ids.videoId;
-        index ++;
-    });
-
-    return linkList;
-}
-
 class YoutubeHandler{
     constructor (){
         this.apiKey = "AIzaSyAWopeKfjAyUSPhGuLJeKnTGkUurG6fS_0"; 
@@ -33,20 +13,24 @@ class YoutubeHandler{
         return await GetJson(urlString);
     }
 
-    GetLinks(jsonObject){
+    GetLinks(jsonObject, maxResults){
         const linkList = Array();
         linkList[0] = "<h1>Youtube Videos</h1>";
         let index = 1;
+        let curItems = 1;
 
         jsonObject.items.forEach(item => {
-            linkList[index] = item.snippet.title;
+            if (curItems > maxResults ){
+                return linkList;
+            }
+            
+            linkList[index] = "<a href=\"https://www.youtube.com/watch?v=" + item.id.videoId + "\">" + item.snippet.title + "</a>"
             index ++;
             linkList[index] = "<img src=\"" + item.snippet.thumbnails.default.url + "\" alt = \"Hewwo\" width=\"120\" height = \"90\">"
             index ++;
-            linkList[index] = item.snippet.description;
+            linkList[index] = item.snippet.description + "<br/>";
             index ++;
-            linkList[index] = "https://www.youtube.com/watch?v=" + item.id.videoId + "<br/>";
-            index ++;
+            curItems ++;
         });
     
         return linkList;

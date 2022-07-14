@@ -35,24 +35,28 @@ class GoogleHandler{
         return await GetJson(urlString);
     }
 
-    GetLinks(jsonObject){
+    GetLinks(jsonObject, maxResults){
         const linkList = Array();
         linkList[0] = "<h1>Google results</h1>";
         let index = 1;
+        let curItems = 1;
     
         jsonObject.items.forEach(item => {
-            linkList[index] = item.title;
+            if (curItems > maxResults){
+                return linkList;
+            }
+            
+            linkList[index] = "<a href=\"" + item.link + "\">" + item.title +"</a><br/>";
             index ++;
 
-            if (item.pagemap.cse_image != undefined && item.pagemap.cse_image.length > 0){
+            if (item.pagemap.cse_image !== undefined && item.pagemap.cse_image.length > 0){
                 linkList[index] = "<img src=\"" + item.pagemap.cse_image[0].src + "\" alt = \"Hewwo\" width=\"120\" height = \"90\">"
                 index ++;
             }
             
-            linkList[index] = item.snippet;
+            linkList[index] = item.snippet + "<br/>";
             index ++;
-            linkList[index] = item.link + "<br/>";
-            index ++;
+            curItems ++;
         });
     
         return linkList;
