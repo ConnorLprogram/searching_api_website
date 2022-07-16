@@ -1,24 +1,3 @@
-// apiKey = "AIzaSyAWopeKfjAyUSPhGuLJeKnTGkUurG6fS_0";
-// engineKey = "dc3d3cc381ea23dea";
-// apiUrlString = "https://www.googleapis.com/customsearch/v1?key=" + apiKey + "&cx=" + engineKey +"&q=";
-
-// function BuildURLString(queryArray){
-//     queryString = Retrieve.EncodeQueries(queryArray);
-//     return urlString + queryString;
-// }
-
-// function GetLinks(jsonObject){
-//     linkList = Array();
-//     let index = 0;
-
-//     jsonObject.items.array.forEach(element => {
-//         linkList[index] = element.link;
-//         index ++;
-//     });
-
-//     return linkList;
-// }
-
 class GoogleHandler{
     constructor (){
         this.apiKey = "AIzaSyAWopeKfjAyUSPhGuLJeKnTGkUurG6fS_0";
@@ -26,25 +5,29 @@ class GoogleHandler{
         this.urlString = "https://www.googleapis.com/customsearch/v1?key=" + this.apiKey + "&cx=" + this.engineKey +"&q=";
     }
 
-    BuildURLString(queryArray){
+
+    BuildURLString(queryArray, maxResults){
         let queryString = EncodeQueries(queryArray);
-        return this.urlString + queryString;
+        return this.urlString + queryString + "&num=" + maxResults;
     }
+
 
     async RetrieveJSON(urlString){
         return await GetJson(urlString);
     }
 
-    GetLinks(jsonObject, maxResults){
+
+    GetLinks(jsonObject){
         const linkList = Array();
         linkList[0] = "<h1>Google results</h1>";
         let index = 1;
-        let curItems = 1;
     
+        if (jsonObject === undefined){
+            linkList[index] = "No results";
+            return linkList;
+        }
+
         jsonObject.items.forEach(item => {
-            if (curItems > maxResults){
-                return linkList;
-            }
             
             linkList[index] = "<a href=\"" + item.link + "\">" + item.title +"</a><br/>";
             index ++;
@@ -56,7 +39,6 @@ class GoogleHandler{
             
             linkList[index] = item.snippet + "<br/>";
             index ++;
-            curItems ++;
         });
     
         return linkList;
