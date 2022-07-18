@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function(){
     slider.oninput = function(){
         value.innerHTML = this.value;
     }
-
+    
     input.addEventListener("keypress", async function(event){
         if (event.key === "Enter"){
             event.preventDefault();
@@ -57,8 +57,13 @@ async function SearchAPIs(words, maxResults){
     let youtubeURLString = youtubeHandler.BuildURLString(wordArray, maxResults);
     let googleURLString = googleHandler.BuildURLString(wordArray, maxResults);
     
-    var youtubeJSON = await youtubeHandler.RetrieveJSON(youtubeURLString);
-    var googleJSON = await googleHandler.RetrieveJSON(googleURLString);
+    try{
+        var youtubeJSON = await youtubeHandler.RetrieveJSON(youtubeURLString);
+        var googleJSON = await googleHandler.RetrieveJSON(googleURLString);
+    }
+    catch (error){
+        throw new Error("Error when trying to retrieve JSON information:<br/>" + error);
+    }
 
     let youtubeLinks = youtubeHandler.GetLinks(youtubeJSON);
     let googleLinks = googleHandler.GetLinks(googleJSON);
@@ -97,11 +102,16 @@ async function HandleResults(words, sliderValue){
 
     text.innerHTML = "Searching for: " + words; 
 
-    var results = await SearchAPIs(words, sliderValue);
-    text.innerHTML = "Results from: " + words;
+    try{
+        var results = await SearchAPIs(words, sliderValue);
+        text.innerHTML = "Results from: " + words;
 
-    left.innerHTML = results[0];
-    right.innerHTML = results[1];
+        left.innerHTML = results[0];
+        right.innerHTML = results[1];
+    }
+    catch(error){
+        text.innerHTML = "Something went wrong:<br/>" + error;
+    }
 }
 
 

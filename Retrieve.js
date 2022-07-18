@@ -1,4 +1,4 @@
-function EncodeQueries(queryArray){ //need to check to see if actually array
+function EncodeQueries(queryArray){
     let queryString = "";
     if (queryArray.length > 0){
         let convertedQueries = new Array();
@@ -17,10 +17,16 @@ async function GetJson(urlString){
     let xmlRequest = new XMLHttpRequest();
     xmlRequest.open("GET", urlString);
     xmlRequest.send();
-    return await RetrieveXMLRequest(xmlRequest);
+
+    try{
+        return await RetrieveXMLRequest(xmlRequest);
+    }
+    catch (error){
+        throw new Error("Request could not be completed:<br/>" + error);
+    }
 }
 
-// async function GetJsonRapidAPI(urlString, apiKey, hostKey){ //Does not work bc of CORS policy
+// async function GetJsonRapidAPI(urlString, apiKey, hostKey){ //Does not work currently because of CORS policy
 //     let xmlRequest = new XMLHttpRequest();
 //     xmlRequest.open("GET", urlString);
 //     xmlRequest.setRequestHeader("Access-Control-Allow-Origin", "https://contextualwebsearch-websearch-v1.p.rapidapi.com")
@@ -30,6 +36,7 @@ async function GetJson(urlString){
 //     return await RetrieveXMLRequest(xmlRequest);
 // }
 
+
 async function RetrieveXMLRequest(sentXMLRequest){
     let jsonPromise = new Promise(function (resolve){
         sentXMLRequest.onreadystatechange = function() {
@@ -37,14 +44,25 @@ async function RetrieveXMLRequest(sentXMLRequest){
                 var jsonArr = JSON.parse(this.responseText);
                 resolve(jsonArr);
             }
+            else if (this.readyState != 4 && this.status != 200){
+                resolve("Failed");
+            }
         };
     });
 
-    return await jsonPromise;
+    results = await jsonPromise;
+
+    if (results == "Failed"){
+        throw new Error("Invalid request: " + sentXMLRequest.status);
+    }
+    else if (results.error === undefined){
+        return results;
+    }
+
+    RaiseRetrieveError(results);
 }
 
-// function ReadFile(fileName){
-//     var fr=new FileReader();
-//     const contents = fr.readAsText(fileName);
-//     return JSON.parse(contents);
-// }
+
+function RaiseRetrieveError(errorJson){
+    throw new Error("Error when retrieving request:\ncode: " + errorJson.error.code + "<br/>message: " + errorJson.error.message);
+}

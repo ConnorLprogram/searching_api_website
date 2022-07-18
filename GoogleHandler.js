@@ -13,7 +13,12 @@ class GoogleHandler{
 
 
     async RetrieveJSON(urlString){
-        return await GetJson(urlString);
+        try{
+            return await GetJson(urlString);
+        }
+        catch(error){
+            throw new Error("Error occured when retrieving Google JSON:<br/>" + error);
+        }
     }
 
 
