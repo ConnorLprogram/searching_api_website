@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function(){
-    var searchButton = document.getElementById("clickit");
+    var userWordButton = document.getElementById("userSearch");
+    var searchButton = document.getElementById("search");
     var randomButton = document.getElementById("random");
     var input = document.getElementById("userInput");
-
     var slider = document.getElementById("numResults");
     var value = document.getElementById("sliderValue")
     value.innerHTML = slider.value;
@@ -10,7 +10,32 @@ document.addEventListener('DOMContentLoaded', function(){
     slider.oninput = function(){
         value.innerHTML = this.value;
     }
+
+    var randomSlider = document.getElementById("randomWords");
+    var randomValue = document.getElementById("randomNumValue");
+    var randomWords = document.getElementById("randomNumWords");
+    randomValue.innerHTML = slider.value;
+
+    randomSlider.oninput = function(){
+        randomValue.innerHTML = this.value;
+    }
     
+    userWordButton.addEventListener("click", function(){
+        input.style.display = "block";
+        randomSlider.style.display = "none";
+        randomValue.style.display = "none";
+        randomWords.style.display = "none";
+    });
+
+    randomButton.addEventListener("click", function(){
+        randomValue.innerHTML = randomSlider.value;
+        input.style.display = "none";
+        randomSlider.style.display = "block";
+        randomWords.style.display = "block";
+        randomValue.style.display = "inline-block";
+    });
+
+
     input.addEventListener("keypress", async function(event){
         if (event.key === "Enter"){
             event.preventDefault();
@@ -20,30 +45,18 @@ document.addEventListener('DOMContentLoaded', function(){
 
 
     searchButton.addEventListener('click', async function(){
-        await GetUserResults(slider.value);
-    })
-
-
-    randomButton.addEventListener('click', async function(){
-        var userInput = GetUserInput();
-        if (userInput === undefined){
-            return;
+        if (randomSlider.style.display === "none") {
+            await GetUserResults(slider.value);
         }
+        else{
+            let randomWordHandler = new RandomWordHandler();
+            let randomWordURLString = randomWordHandler.BuildURLString(randomSlider.value);
+            var words = await randomWordHandler.RetrieveJSON(randomWordURLString);
 
-        var userNum = parseInt(userInput);
-
-        if (isNaN(userNum)){
-            text.innerHTML = userInput + " is not a valid integer";
-            return;
+            words = words.join(" ");
+            
+            await HandleResults(words, slider.value);            
         }
-
-        let randomWordHandler = new RandomWordHandler();
-        let randomWordURLString = randomWordHandler.BuildURLString(userNum);
-        var words = await randomWordHandler.RetrieveJSON(randomWordURLString);
-
-        words = words.join(" ");
-        
-        await HandleResults(words, slider.value);
     })
 })
 

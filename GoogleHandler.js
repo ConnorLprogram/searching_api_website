@@ -36,8 +36,7 @@ class GoogleHandler{
             
             linkList[index] = "<a href=\"" + item.link + "\">" + item.title +"</a><br/>";
             index ++;
-
-            if (item.pagemap.cse_image !== undefined && item.pagemap.cse_image.length > 0){
+            if (item.pagemap !== undefined && item.pagemap.cse_image !== undefined && item.pagemap.cse_image.length > 0){
                 linkList[index] = "<img src=\"" + item.pagemap.cse_image[0].src + "\" alt = \"Hewwo\" width=\"120\" height = \"90\">"
                 index ++;
             }
@@ -45,6 +44,10 @@ class GoogleHandler{
             linkList[index] = item.snippet + "<br/>";
             index ++;
         });
+
+        if (linkList.length === 1){
+            linkList[index] = "No results";
+        }
     
         return linkList;
     }   

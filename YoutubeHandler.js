@@ -42,6 +42,10 @@ class YoutubeHandler{
             linkList[index] = item.snippet.description + "<br/>";
             index ++;
         });
+
+        if (linkList.length === 1){
+            linkList[index] = "No results";
+        }
     
         return linkList;
     }    

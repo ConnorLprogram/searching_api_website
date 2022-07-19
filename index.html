@@ -40,6 +40,10 @@
             .slidecontainer {
                 width: 100%;
             }
+
+            .slider {
+                width: 50%;
+            }
         </style>
     </head>
     <body>
@@ -50,23 +54,33 @@
         <script src="Retrieve.js"></script>
 
         
-        <div id = "instructions">Type some words and press the button to search or type an integer and search a random set of words</div>
+        <div id = "instructions">Instructions: Type some words and press the send button to search <br/> To search a random set of words, press random and choose a number then press send<br/><br/></div>
         <input id = "userInput"></input>
-        <button id = "clickit">search</button>
-        <button id = "random">random</button><br/>
 
         <div class="slidecontainer">
-            <input type="range" min="1" max="10" value="50" class="slider" id="numResults">
+            <input type="range" min="1" max="5" value="50" class="slider" id="randomWords" style="display: none">
+            <p id="randomNumWords" style="display: none">Number of words: <span id="randomNumValue"></span></p>
+        </div>
+
+        <button id = "userSearch">word search</button>
+        <button id = "random">random</button><br/>
+        <button id = "search" >send</button><br/>
+
+        <div class="slidecontainer">
+            <input type="range" min="1" max="10" value="50" class="slider" id="numResults"> Change max searches
             <p>Max searches: <span id="sliderValue"></span></p>
-          </div>
+        </div>
 
         <div id ="text"></div>
+
 
         <div class="grid-container">
             <div class="grid-item" id = "left"></div>
             <div class="grid-item" id = "right"></div>
         </div>
     </body>
+
+    
     <footer>
         Made by: Connor Lee
     </footer>
